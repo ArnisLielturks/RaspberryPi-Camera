@@ -2,7 +2,9 @@ const fs = require("fs");
 const path = require("path");
 const { spawn } = require("child_process");
 
-const SHUTTER_SPEEDS = [1000, 5000, 15000, 1000000, 2500000, 4000000, 6000000];
+const MICRO_SECONDS_MULTIPLIER = 1000 * 1000;
+
+const SHUTTER_SPEEDS = [0.01, 0.05, 0.1, 0.5, 1, 5, 10];
 const GAIN_VALUES = [1, 2, 4, 6, 8, 10];
 
 const DEFAULT_CONFIGS = [];
@@ -55,7 +57,7 @@ function runCapture({ shutter, gain }) {
   const captureCommand = [
     'TIMESTAMP=$(date +"%Y%m%d_%H%M%S")',
     `FILENAME="${saveDir}/astro_$TIMESTAMP.jpg"`,
-    `rpicam-still -o "$FILENAME" --shutter ${shutter} --gain ${gain} --denoise off --nopreview`,
+    `rpicam-still -o "$FILENAME" --shutter ${shutter * MICRO_SECONDS_MULTIPLIER} --gain ${gain} --denoise off --nopreview`,
     'echo "Captured $FILENAME"',
   ].join("; ");
 
