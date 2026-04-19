@@ -17,7 +17,7 @@ for (const shutter of SHUTTER_SPEEDS) {
 const SAVE_ROOT = process.env.SAVE_ROOT
   ? path.resolve(process.env.SAVE_ROOT)
   : path.resolve(process.cwd(), "captures");
-const INTERVAL_MS = Number(process.env.INTERVAL_MS || 20000);
+const INTERVAL_MS = Number(process.env.INTERVAL_MS || 120000);
 const MAX_CYCLES = Number(process.env.MAX_CYCLES || 0); // 0 means infinite
 
 function parseConfigs() {
