@@ -2,20 +2,15 @@ const fs = require("fs");
 const path = require("path");
 const { spawn } = require("child_process");
 
-// Configure shutter/gain pairs here or via CAPTURE_CONFIGS JSON env var.
-// Daylight configurations (shorter exposures, lower gain)
-const DEFAULT_CONFIGS = [
-  { shutter: 1000, gain: 1 },     // Bright daylight
-  { shutter: 2000, gain: 1 },     // Slightly dimmer daylight
-  { shutter: 5000, gain: 2 },     // Late afternoon, shaded
-  { shutter: 15000, gain: 3 },    // Overcast, low sun
+const SHUTTER_SPEEDS = [1000, 5000, 15000, 1000000, 2500000, 4000000, 6000000];
+const GAIN_VALUES = [1, 2, 4, 6, 8, 10];
 
-  // Nighttime configurations (long exposures, higher gain)
-  { shutter: 1000000, gain: 4 },  // Dusk or city-lit night
-  { shutter: 2500000, gain: 6 },  // Suburban night
-  { shutter: 4000000, gain: 8 },  // Dark sky, short star trails
-  { shutter: 6000000, gain: 10 }, // Long exposure, starlight only
-];
+const DEFAULT_CONFIGS = [];
+for (const shutter of SHUTTER_SPEEDS) {
+  for (const gain of GAIN_VALUES) {
+    DEFAULT_CONFIGS.push({ shutter, gain });
+  }
+}
 
 const SAVE_ROOT = process.env.SAVE_ROOT
   ? path.resolve(process.env.SAVE_ROOT)
