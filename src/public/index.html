@@ -19,6 +19,21 @@
     <aside>
       <form id="captureForm" class="controls">
         <h2>Capture Controls</h2>
+        <div class="preset-panel">
+          <label>Preset
+            <select id="presetSelect">
+              <option value="">Custom settings</option>
+            </select>
+          </label>
+          <label>Preset name
+            <input id="presetName" type="text" maxlength="80" placeholder="My clear-night preset" />
+          </label>
+          <div class="actions preset-actions">
+            <button id="applyPresetButton" class="secondary" type="button">Apply</button>
+            <button id="savePresetButton" class="secondary" type="button">Save Preset</button>
+            <button id="deletePresetButton" class="danger" type="button">Delete</button>
+          </div>
+        </div>
         <div class="grid">
           <label class="full">Shutter speed: <span id="shutterLabel">5.0000s</span>
             <input id="shutterRange" name="shutterSeconds" type="range" min="0.0001" max="8" step="0.0001" value="5" />
@@ -87,6 +102,13 @@
       <section class="status">
         <h2>Status</h2>
         <div id="statusMeta" class="meta"></div>
+        <div class="storage-panel">
+          <div>
+            <strong>Available disk space:</strong>
+            <span id="diskSpace">Checking...</span>
+          </div>
+          <button id="deleteImagesButton" class="danger" type="button">Delete Captured Images</button>
+        </div>
         <pre id="outputLog"></pre>
       </section>
     </aside>

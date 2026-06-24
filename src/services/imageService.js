@@ -34,7 +34,32 @@ async function listImages() {
   return files.sort((a, b) => new Date(b.modifiedAt) - new Date(a.modifiedAt)).slice(0, 36);
 }
 
+async function listImageEntries() {
+  const entries = await fs.promises.readdir(CAPTURE_DIR, { withFileTypes: true });
+  return entries.filter((entry) => entry.isFile() && IMAGE_EXTENSIONS.has(path.extname(entry.name).toLowerCase()));
+}
+
+async function deleteAllImages() {
+  const entries = await listImageEntries();
+  let deletedCount = 0;
+  let freedBytes = 0;
+
+  for (const entry of entries) {
+    const fullPath = path.join(CAPTURE_DIR, entry.name);
+    const stat = await fs.promises.stat(fullPath);
+    await fs.promises.unlink(fullPath);
+    deletedCount += 1;
+    freedBytes += stat.size;
+  }
+
+  return {
+    deletedCount,
+    freedBytes,
+  };
+}
+
 const imageService = {
+  deleteAllImages,
   imagePathFromName,
   listImages,
 };

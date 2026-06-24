@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node src/main.js",
-    "check": "node --check src/main.js"
+    "check": "find src -name '*.js' -print -exec node --check {} \\;"
   },
   "dependencies": {
     "express": "^4.19.2"

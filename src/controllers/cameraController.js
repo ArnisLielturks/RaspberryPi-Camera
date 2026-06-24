@@ -1,6 +1,8 @@
 const path = require("path");
 const { cameraService } = require("../services/cameraService");
 const { imageService } = require("../services/imageService");
+const { presetService } = require("../services/presetService");
+const { storageService } = require("../services/storageService");
 
 const cameraController = {
   getStatus(request, response) {
@@ -13,6 +15,45 @@ const cameraController = {
     } catch (error) {
       next(error);
     }
+  },
+
+  async getStorage(request, response, next) {
+    try {
+      response.json({ storage: await storageService.getDiskSpace() });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async deleteAllImages(request, response, next) {
+    try {
+      const result = await imageService.deleteAllImages();
+      response.json({
+        ...result,
+        images: await imageService.listImages(),
+        storage: await storageService.getDiskSpace(),
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  listPresets(request, response) {
+    response.json({ presets: presetService.listPresets() });
+  },
+
+  savePreset(request, response, next) {
+    try {
+      const preset = presetService.savePreset(request.body);
+      response.status(201).json({ preset, presets: presetService.listPresets() });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  deletePreset(request, response) {
+    const deleted = presetService.deletePreset(request.params.id);
+    response.json({ deleted, presets: presetService.listPresets() });
   },
 
   startCapture(request, response) {

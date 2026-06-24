@@ -1,0 +1,44 @@
+{
+  "presets": [
+    {
+      "id": "night-stack",
+      "name": "Night stacked",
+      "options": {
+        "shutterSeconds": 5,
+        "shutterMicros": 5000000,
+        "iso": 800,
+        "gain": 8,
+        "width": 3280,
+        "height": 2464,
+        "frames": 30,
+        "format": "png",
+        "awb": "tungsten",
+        "denoise": "off",
+        "stackFrames": true,
+        "gamma": 2.5,
+        "contrast": 2.2,
+        "brightness": 0.35
+      }
+    },
+    {
+      "id": "quick-preview",
+      "name": "Quick preview",
+      "options": {
+        "shutterSeconds": 0.1,
+        "shutterMicros": 100000,
+        "iso": 200,
+        "gain": 2,
+        "width": 1640,
+        "height": 1232,
+        "frames": 1,
+        "format": "jpg",
+        "awb": "auto",
+        "denoise": "auto",
+        "stackFrames": false,
+        "gamma": 1,
+        "contrast": 1,
+        "brightness": 0
+      }
+    }
+  ]
+}
