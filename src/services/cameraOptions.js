@@ -29,8 +29,10 @@ function normalizeOptions(body = {}) {
   const gamma = clampNumber(body.gamma, { min: 0.1, max: 5, fallback: 2.5 });
   const contrast = clampNumber(body.contrast, { min: 0, max: 4, fallback: 2.2 });
   const brightness = clampNumber(body.brightness, { min: -1, max: 1, fallback: 0.35 });
+  const captureMode = body.captureMode === "continuous" ? "continuous" : "single";
 
   return {
+    captureMode,
     shutterSeconds,
     shutterMicros: Math.round(shutterSeconds * MICROSECONDS_PER_SECOND),
     iso,

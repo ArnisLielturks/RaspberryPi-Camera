@@ -4,6 +4,7 @@
       "id": "night-stack",
       "name": "Night stacked",
       "options": {
+        "captureMode": "single",
         "shutterSeconds": 5,
         "shutterMicros": 5000000,
         "iso": 800,
@@ -24,6 +25,7 @@
       "id": "quick-preview",
       "name": "Quick preview",
       "options": {
+        "captureMode": "single",
         "shutterSeconds": 0.1,
         "shutterMicros": 100000,
         "iso": 200,

@@ -30,6 +30,7 @@ function syncShutter(value) {
 function readForm() {
   const formData = new FormData(form);
   return {
+    captureMode: formData.get("captureMode"),
     shutterSeconds: shutterInput.value,
     iso: formData.get("iso"),
     gain: formData.get("gain"),
@@ -61,6 +62,7 @@ function setNamedField(name, value) {
 }
 
 function applyOptions(options) {
+  setNamedField("captureMode", options.captureMode || "single");
   syncShutter(options.shutterSeconds);
   setNamedField("iso", options.iso);
   setNamedField("gain", options.gain);

@@ -8,6 +8,7 @@ const DEFAULT_PRESETS = [
     id: "night-stack",
     name: "Night stacked",
     options: normalizeOptions({
+      captureMode: "single",
       shutterSeconds: 5,
       iso: 800,
       gain: 8,
@@ -27,6 +28,7 @@ const DEFAULT_PRESETS = [
     id: "quick-preview",
     name: "Quick preview",
     options: normalizeOptions({
+      captureMode: "single",
       shutterSeconds: 0.1,
       iso: 200,
       gain: 2,
