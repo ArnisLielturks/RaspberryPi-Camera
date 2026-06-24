@@ -2,3 +2,4 @@
 *.mp4
 *.png
 .DS_Store
+node_modules/

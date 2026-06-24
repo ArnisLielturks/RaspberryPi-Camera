@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Raspberry Pi Camera</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Raspberry Pi Camera</h1>
+      <h2>Long exposure capture controller</h2>
+    </div>
+    <div id="statusPill" class="status-pill"><span class="dot"></span><span>Checking status</span></div>
+  </header>
+  <main>
+    <aside>
+      <form id="captureForm" class="controls">
+        <h2>Capture Controls</h2>
+        <div class="grid">
+          <label class="full">Shutter speed: <span id="shutterLabel">5.0000s</span>
+            <input id="shutterRange" name="shutterSeconds" type="range" min="0.0001" max="8" step="0.0001" value="5" />
+            <input id="shutterInput" type="number" min="0.0001" max="8" step="0.0001" value="5" />
+          </label>
+          <label>ISO equivalent
+            <input name="iso" type="number" min="100" max="1600" step="50" value="800" />
+          </label>
+          <label>Analog gain
+            <input name="gain" type="number" min="1" max="16" step="0.1" value="8" />
+          </label>
+          <label>Width
+            <input name="width" type="number" min="320" max="9152" step="1" value="3280" />
+          </label>
+          <label>Height
+            <input name="height" type="number" min="240" max="6944" step="1" value="2464" />
+          </label>
+          <label>Frames
+            <input name="frames" type="number" min="1" max="120" step="1" value="30" />
+          </label>
+          <label>Format
+            <select name="format">
+              <option value="png" selected>PNG</option>
+              <option value="jpg">JPG</option>
+            </select>
+          </label>
+          <label>White balance
+            <select name="awb">
+              <option value="tungsten" selected>Tungsten</option>
+              <option value="auto">Auto</option>
+              <option value="daylight">Daylight</option>
+              <option value="cloudy">Cloudy</option>
+              <option value="fluorescent">Fluorescent</option>
+              <option value="incandescent">Incandescent</option>
+              <option value="indoor">Indoor</option>
+            </select>
+          </label>
+          <label>Denoise
+            <select name="denoise">
+              <option value="off" selected>Off</option>
+              <option value="auto">Auto</option>
+              <option value="cdn_off">CDN off</option>
+              <option value="cdn_fast">CDN fast</option>
+              <option value="cdn_hq">CDN HQ</option>
+            </select>
+          </label>
+          <label>Gamma
+            <input name="gamma" type="number" min="0.1" max="5" step="0.1" value="2.5" />
+          </label>
+          <label>Contrast
+            <input name="contrast" type="number" min="0" max="4" step="0.1" value="2.2" />
+          </label>
+          <label>Brightness
+            <input name="brightness" type="number" min="-1" max="1" step="0.05" value="0.35" />
+          </label>
+          <label class="full checkbox-label">
+            <input name="stackFrames" type="checkbox" checked /> Blend frames with ffmpeg
+          </label>
+        </div>
+        <div class="actions">
+          <button id="startButton" type="submit">Start Capture</button>
+          <button id="stopButton" class="danger" type="button">Stop</button>
+          <button id="refreshButton" class="secondary" type="button">Refresh</button>
+        </div>
+      </form>
+      <section class="status">
+        <h2>Status</h2>
+        <div id="statusMeta" class="meta"></div>
+        <pre id="outputLog"></pre>
+      </section>
+    </aside>
+    <section class="gallery">
+      <div class="gallery-head">
+        <h2>Latest Images</h2>
+        <button id="imageRefreshButton" class="secondary" type="button">Reload</button>
+      </div>
+      <div id="images" class="images"></div>
+    </section>
+  </main>
+</body>
+</html>

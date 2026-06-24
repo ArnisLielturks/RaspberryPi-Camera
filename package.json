@@ -1,0 +1,26 @@
+{
+  "name": "raspberrypi-camera",
+  "version": "1.0.0",
+  "description": "Raspberry Pi camera web controller",
+  "main": "src/main.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "start": "node src/main.js",
+    "check": "node --check src/main.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArnisLielturks/RaspberryPi-Camera.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ArnisLielturks/RaspberryPi-Camera/issues"
+  },
+  "homepage": "https://github.com/ArnisLielturks/RaspberryPi-Camera#readme"
+}

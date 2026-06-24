@@ -1,0 +1,57 @@
+const path = require("path");
+const { cameraService } = require("../services/cameraService");
+const { imageService } = require("../services/imageService");
+
+const cameraController = {
+  getStatus(request, response) {
+    response.json(cameraService.getStatus());
+  },
+
+  async listImages(request, response, next) {
+    try {
+      response.json({ images: await imageService.listImages() });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  startCapture(request, response) {
+    if (cameraService.isRunning()) {
+      response.status(409).json({
+        error: "A capture is already running.",
+        status: cameraService.getStatus(),
+      });
+      return;
+    }
+
+    const result = cameraService.startCapture(request.body);
+    response.status(202).json(result);
+  },
+
+  stopCapture(request, response) {
+    cameraService.stopCapture();
+    response.json({ status: cameraService.getStatus() });
+  },
+
+  sendImage(request, response, next) {
+    const fullPath = imageService.imagePathFromName(request.params.name);
+    if (!fullPath) {
+      response.sendStatus(404);
+      return;
+    }
+    response.sendFile(fullPath, next);
+  },
+
+  downloadImage(request, response, next) {
+    const fullPath = imageService.imagePathFromName(request.params.name);
+    if (!fullPath) {
+      response.sendStatus(404);
+      return;
+    }
+    response.download(fullPath, path.basename(fullPath), next);
+  },
+};
+
+module.exports = {
+  cameraController,
+};
