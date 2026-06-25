@@ -17,7 +17,7 @@ function normalizeOptions(body = {}) {
   const gain = clampNumber(body.gain || iso / 100, { min: 1, max: 16, fallback: 8 });
   const width = clampNumber(body.width, { min: 320, max: 9152, fallback: 3280, integer: true });
   const height = clampNumber(body.height, { min: 240, max: 6944, fallback: 2464, integer: true });
-  const frames = clampNumber(body.frames, { min: 1, max: 120, fallback: 30, integer: true });
+  const frames = clampNumber(body.frames, { min: 1, max: 100000, fallback: 30, integer: true });
   const format = ["jpg", "png"].includes(body.format) ? body.format : "png";
   const awb = ["auto", "tungsten", "daylight", "cloudy", "fluorescent", "incandescent", "indoor"].includes(body.awb)
     ? body.awb
