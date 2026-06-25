@@ -3,6 +3,7 @@ const { cameraService } = require("../services/cameraService");
 const { imageService } = require("../services/imageService");
 const { presetService } = require("../services/presetService");
 const { storageService } = require("../services/storageService");
+const { videoService } = require("../services/videoService");
 
 const cameraController = {
   getStatus(request, response) {
@@ -11,7 +12,15 @@ const cameraController = {
 
   async listImages(request, response, next) {
     try {
-      response.json({ images: await imageService.listImages() });
+      response.json(await imageService.listImages(request.query));
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async listVideos(request, response, next) {
+    try {
+      response.json(await videoService.listVideos(request.query));
     } catch (error) {
       next(error);
     }
@@ -30,7 +39,7 @@ const cameraController = {
       const result = await imageService.deleteAllImages();
       response.json({
         ...result,
-        images: await imageService.listImages(),
+        ...(await imageService.listImages(request.query)),
         storage: await storageService.getDiskSpace(),
       });
     } catch (error) {
@@ -85,6 +94,24 @@ const cameraController = {
 
   downloadImage(request, response, next) {
     const fullPath = imageService.imagePathFromName(request.params.name);
+    if (!fullPath) {
+      response.sendStatus(404);
+      return;
+    }
+    response.download(fullPath, path.basename(fullPath), next);
+  },
+
+  sendVideo(request, response, next) {
+    const fullPath = videoService.videoPathFromName(request.params.name);
+    if (!fullPath) {
+      response.sendStatus(404);
+      return;
+    }
+    response.sendFile(fullPath, next);
+  },
+
+  downloadVideo(request, response, next) {
+    const fullPath = videoService.videoPathFromName(request.params.name);
     if (!fullPath) {
       response.sendStatus(404);
       return;

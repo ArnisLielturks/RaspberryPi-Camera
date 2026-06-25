@@ -12,6 +12,7 @@ function createApp() {
   app.get("/api/status", cameraController.getStatus);
   app.get("/api/images", cameraController.listImages);
   app.delete("/api/images", cameraController.deleteAllImages);
+  app.get("/api/videos", cameraController.listVideos);
   app.get("/api/storage", cameraController.getStorage);
   app.get("/api/presets", cameraController.listPresets);
   app.post("/api/presets", cameraController.savePreset);
@@ -20,6 +21,8 @@ function createApp() {
   app.post("/api/stop", cameraController.stopCapture);
   app.get("/images/:name", cameraController.sendImage);
   app.get("/download/:name", cameraController.downloadImage);
+  app.get("/videos/:name", cameraController.sendVideo);
+  app.get("/download-video/:name", cameraController.downloadVideo);
 
   app.use(errorHandler);
 

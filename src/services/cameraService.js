@@ -1,6 +1,6 @@
 const fs = require("fs");
 const { spawn } = require("child_process");
-const { CAPTURE_DIR } = require("../config");
+const { CAPTURE_DIR, VIDEO_DIR } = require("../config");
 const { buildCaptureScript } = require("./captureScript");
 const { normalizeOptions } = require("./cameraOptions");
 
@@ -33,6 +33,7 @@ function getStatus() {
     command: lastRun.command,
     output: lastRun.output.slice(-80),
     captureDir: CAPTURE_DIR,
+    videoDir: VIDEO_DIR,
   };
 }
 

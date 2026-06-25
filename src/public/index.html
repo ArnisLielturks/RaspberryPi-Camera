@@ -118,13 +118,32 @@
         <pre id="outputLog"></pre>
       </section>
     </aside>
-    <section class="gallery">
-      <div class="gallery-head">
-        <h2>Latest Images</h2>
-        <button id="imageRefreshButton" class="secondary" type="button">Reload</button>
-      </div>
-      <div id="images" class="images"></div>
-    </section>
+    <div class="media-column">
+      <section class="gallery">
+        <div class="gallery-head">
+          <h2>Images</h2>
+          <div class="pager">
+            <button id="imagePrevButton" class="secondary" type="button">Prev</button>
+            <span id="imagePageLabel">Page 1</span>
+            <button id="imageNextButton" class="secondary" type="button">Next</button>
+            <button id="imageRefreshButton" class="secondary" type="button">Reload</button>
+          </div>
+        </div>
+        <div id="images" class="images"></div>
+      </section>
+      <section class="gallery">
+        <div class="gallery-head">
+          <h2>Videos</h2>
+          <div class="pager">
+            <button id="videoPrevButton" class="secondary" type="button">Prev</button>
+            <span id="videoPageLabel">Page 1</span>
+            <button id="videoNextButton" class="secondary" type="button">Next</button>
+            <button id="videoRefreshButton" class="secondary" type="button">Reload</button>
+          </div>
+        </div>
+        <div id="videos" class="videos"></div>
+      </section>
+    </div>
   </main>
 </body>
 </html>

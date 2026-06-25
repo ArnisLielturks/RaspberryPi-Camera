@@ -4,10 +4,18 @@ const statusMeta = document.getElementById("statusMeta");
 const diskSpace = document.getElementById("diskSpace");
 const outputLog = document.getElementById("outputLog");
 const images = document.getElementById("images");
+const videos = document.getElementById("videos");
 const startButton = document.getElementById("startButton");
 const stopButton = document.getElementById("stopButton");
 const refreshButton = document.getElementById("refreshButton");
 const imageRefreshButton = document.getElementById("imageRefreshButton");
+const imagePrevButton = document.getElementById("imagePrevButton");
+const imageNextButton = document.getElementById("imageNextButton");
+const imagePageLabel = document.getElementById("imagePageLabel");
+const videoRefreshButton = document.getElementById("videoRefreshButton");
+const videoPrevButton = document.getElementById("videoPrevButton");
+const videoNextButton = document.getElementById("videoNextButton");
+const videoPageLabel = document.getElementById("videoPageLabel");
 const presetSelect = document.getElementById("presetSelect");
 const presetName = document.getElementById("presetName");
 const applyPresetButton = document.getElementById("applyPresetButton");
@@ -19,6 +27,11 @@ const shutterInput = document.getElementById("shutterInput");
 const shutterLabel = document.getElementById("shutterLabel");
 
 let presets = [];
+let imagePage = 1;
+let imagePagination = { page: 1, pageSize: 12, total: 0, totalPages: 1 };
+let videoPage = 1;
+let videoPagination = { page: 1, pageSize: 8, total: 0, totalPages: 1 };
+let wasCaptureRunning = false;
 
 function syncShutter(value) {
   const numeric = Math.min(Math.max(Number(value) || 5, 0.0001), 8);
@@ -101,6 +114,7 @@ function formatDiskSpace(storage) {
 function setStatusMeta(status) {
   const fields = [
     ["Capture folder", status.captureDir],
+    ["Video folder", status.videoDir],
     ["Started", status.startedAt ? new Date(status.startedAt).toLocaleString() : "-"],
     ["Ended", status.endedAt ? new Date(status.endedAt).toLocaleString() : "-"],
     ["Exit code", status.exitCode ?? "-"],
@@ -127,6 +141,10 @@ async function refreshStatus() {
   stopButton.disabled = !status.running;
   setStatusMeta(status);
   outputLog.textContent = status.output.length ? status.output.join("\n") : "No capture output yet.";
+  if (wasCaptureRunning && !status.running) {
+    await Promise.all([refreshImages(), refreshVideos()]);
+  }
+  wasCaptureRunning = status.running;
 }
 
 function renderImage(image) {
@@ -162,19 +180,82 @@ function renderImage(image) {
   return figure;
 }
 
+function renderVideo(video) {
+  const figure = document.createElement("figure");
+  const player = document.createElement("video");
+  const caption = document.createElement("figcaption");
+  const fileName = document.createElement("div");
+  const details = document.createElement("div");
+  const downloadLink = document.createElement("a");
+
+  player.src = video.url;
+  player.controls = true;
+  player.preload = "metadata";
+
+  fileName.className = "filename";
+  fileName.title = video.name;
+  fileName.textContent = video.name;
+
+  details.textContent = `${new Date(video.modifiedAt).toLocaleString()} · ${formatBytes(video.size)}`;
+
+  downloadLink.className = "download";
+  downloadLink.href = video.downloadUrl;
+  downloadLink.textContent = "Download";
+
+  caption.append(fileName, details, downloadLink);
+  figure.append(player, caption);
+  return figure;
+}
+
+function renderEmpty(message) {
+  const empty = document.createElement("div");
+  empty.className = "empty";
+  empty.textContent = message;
+  return empty;
+}
+
+function updateImagePager() {
+  imagePage = imagePagination.page;
+  imagePageLabel.textContent = `Page ${imagePagination.page} of ${imagePagination.totalPages} · ${imagePagination.total} files`;
+  imagePrevButton.disabled = imagePagination.page <= 1;
+  imageNextButton.disabled = imagePagination.page >= imagePagination.totalPages;
+}
+
+function updateVideoPager() {
+  videoPage = videoPagination.page;
+  videoPageLabel.textContent = `Page ${videoPagination.page} of ${videoPagination.totalPages} · ${videoPagination.total} files`;
+  videoPrevButton.disabled = videoPagination.page <= 1;
+  videoNextButton.disabled = videoPagination.page >= videoPagination.totalPages;
+}
+
 async function refreshImages() {
-  const response = await fetch("/api/images");
+  const response = await fetch(`/api/images?page=${imagePage}&pageSize=${imagePagination.pageSize}`);
   const data = await response.json();
+  imagePagination = data.pagination;
 
   if (!data.images.length) {
-    const empty = document.createElement("div");
-    empty.className = "empty";
-    empty.textContent = "No images found yet.";
-    images.replaceChildren(empty);
+    images.replaceChildren(renderEmpty("No images found yet."));
+    updateImagePager();
     return;
   }
 
   images.replaceChildren(...data.images.map(renderImage));
+  updateImagePager();
+}
+
+async function refreshVideos() {
+  const response = await fetch(`/api/videos?page=${videoPage}&pageSize=${videoPagination.pageSize}`);
+  const data = await response.json();
+  videoPagination = data.pagination;
+
+  if (!data.videos.length) {
+    videos.replaceChildren(renderEmpty("No videos found yet."));
+    updateVideoPager();
+    return;
+  }
+
+  videos.replaceChildren(...data.videos.map(renderVideo));
+  updateVideoPager();
 }
 
 async function refreshStorage() {
@@ -209,7 +290,11 @@ async function refreshPresets() {
 }
 
 async function refreshAll() {
-  await Promise.all([refreshStatus(), refreshImages(), refreshStorage()]);
+  await Promise.all([refreshStatus(), refreshImages(), refreshVideos(), refreshStorage()]);
+}
+
+async function refreshLiveState() {
+  await Promise.all([refreshStatus(), refreshStorage()]);
 }
 
 form.addEventListener("submit", async (event) => {
@@ -309,13 +394,12 @@ deleteImagesButton.addEventListener("click", async () => {
     return;
   }
 
+  imagePagination = data.pagination;
   images.replaceChildren(...data.images.map(renderImage));
   if (!data.images.length) {
-    const empty = document.createElement("div");
-    empty.className = "empty";
-    empty.textContent = "No images found yet.";
-    images.replaceChildren(empty);
+    images.replaceChildren(renderEmpty("No images found yet."));
   }
+  updateImagePager();
   diskSpace.textContent = formatDiskSpace(data.storage);
   alert(`Deleted ${data.deletedCount} image files and freed ${formatBytes(data.freedBytes)}.`);
 });
@@ -324,8 +408,25 @@ shutterRange.addEventListener("input", () => syncShutter(shutterRange.value));
 shutterInput.addEventListener("input", () => syncShutter(shutterInput.value));
 refreshButton.addEventListener("click", refreshAll);
 imageRefreshButton.addEventListener("click", refreshImages);
+imagePrevButton.addEventListener("click", () => {
+  imagePage = Math.max(imagePage - 1, 1);
+  refreshImages();
+});
+imageNextButton.addEventListener("click", () => {
+  imagePage = Math.min(imagePage + 1, imagePagination.totalPages);
+  refreshImages();
+});
+videoRefreshButton.addEventListener("click", refreshVideos);
+videoPrevButton.addEventListener("click", () => {
+  videoPage = Math.max(videoPage - 1, 1);
+  refreshVideos();
+});
+videoNextButton.addEventListener("click", () => {
+  videoPage = Math.min(videoPage + 1, videoPagination.totalPages);
+  refreshVideos();
+});
 
 syncShutter(5);
 refreshPresets();
 refreshAll();
-setInterval(refreshAll, 3000);
+setInterval(refreshLiveState, 3000);
